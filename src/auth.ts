@@ -14,7 +14,7 @@ export const authOptions: NextAuthOptions = {
         console.log(credentials);
         try {
           const res = await fetch(
-            `${process.env.API_BASE_URL}/api/v1/auth/signin`,
+            `https://ecommerce.routemisr.com/api/v1/auth/signin`,
             {
               method: "POST",
               headers: {
