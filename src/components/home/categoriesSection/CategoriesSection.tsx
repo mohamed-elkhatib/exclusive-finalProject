@@ -1,9 +1,9 @@
 import { Icategory } from "@/interfaces/categories.interface";
-import { getCategories } from "@/services/categories.services";
 import React from "react";
 import CategoriesSlider from "./CategoriesSlider";
 import SectionTitle from "@/components/shared/SectionTitle";
 import { Separator } from "@/components/ui/separator";
+import { getCategories } from "@/services/categories.services";
 
 export default async function CategoriesSection() {
   const { data: categories }: { data: Icategory[] } = await getCategories();

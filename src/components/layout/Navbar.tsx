@@ -32,6 +32,8 @@ import { signOut, useSession } from "next-auth/react";
 import { Badge } from "../ui/badge";
 import { useCart } from "@/context/CartContext";
 
+import { useWishlist } from "@/context/WishlistContext";
+
 const links = [
   {
     path: "/",
@@ -56,6 +58,9 @@ const Navbar = () => {
   const { status } = useSession();
   const { cartDetails } = useCart();
 
+  // 🔧 Use Wishlist Context
+  const { wishlist } = useWishlist();
+
   return (
     <section className="py-4">
       <div className="container mx-auto">
@@ -65,6 +70,7 @@ const Navbar = () => {
               Exclusive
             </span>
           </Link>
+
           <NavigationMenu className="hidden lg:block">
             <NavigationMenuList>
               {links.map((link, idx) => (
@@ -84,11 +90,10 @@ const Navbar = () => {
               ))}
             </NavigationMenuList>
           </NavigationMenu>
+
           <div className="hidden items-center gap-4 lg:flex">
             {status === "loading" ? (
-              <>
-                <span>Loading...</span>
-              </>
+              <span>Loading...</span>
             ) : status === "unauthenticated" ? (
               <>
                 <Button variant="outline" asChild>
@@ -102,14 +107,17 @@ const Navbar = () => {
               <>
                 <div className="flex items-center gap-4">
                   <Link className="relative" href={"/wishlist"}>
-                    <Badge
-                      className="absolute -top-3.5 -end-2 h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"
-                      variant="destructive"
-                    >
-                      9
-                    </Badge>
+                    {wishlist.length > 0 && (
+                      <Badge
+                        className="absolute -top-3.5 -end-2 h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"
+                        variant="destructive"
+                      >
+                        {wishlist.length}
+                      </Badge>
+                    )}
                     <Heart className="size-6" />
                   </Link>
+
                   <Link className="relative" href={"/cart"}>
                     {cartDetails && (
                       <Badge
@@ -130,9 +138,9 @@ const Navbar = () => {
                       <DropdownMenuLabel>My Account</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem>
-                        <Link href={"/profile"}>profile</Link>
+                        <Link href={"/profile"}>Profile</Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem>purchase</DropdownMenuItem>
+                      <DropdownMenuItem>Purchase</DropdownMenuItem>
                       <DropdownMenuItem
                         className="cursor-pointer"
                         onClick={() => signOut({ callbackUrl: "/login" })}
@@ -145,6 +153,7 @@ const Navbar = () => {
               </>
             )}
           </div>
+
           <Sheet>
             <SheetTrigger asChild className="lg:hidden">
               <Button variant="outline" size="icon">
@@ -161,6 +170,7 @@ const Navbar = () => {
                   </Link>
                 </SheetTitle>
               </SheetHeader>
+
               <div className="flex flex-col p-4">
                 <div className="flex flex-col gap-6">
                   {links.map((link, idx) => (
@@ -177,11 +187,10 @@ const Navbar = () => {
                     </Link>
                   ))}
                 </div>
+
                 <div className="mt-6 flex flex-col gap-4">
                   {status === "loading" ? (
-                    <>
-                      <span>Loading...</span>
-                    </>
+                    <span>Loading...</span>
                   ) : status === "unauthenticated" ? (
                     <>
                       <Button variant="outline" asChild>
@@ -193,49 +202,54 @@ const Navbar = () => {
                     </>
                   ) : (
                     <>
-                <div className="flex items-center gap-4">
-                  <Link className="relative" href={"/wishlist"}>
-                    <Badge
-                      className="absolute -top-3.5 -end-2 h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"
-                      variant="destructive"
-                    >
-                      9
-                    </Badge>
-                    <Heart className="size-6" />
-                  </Link>
-                  <Link className="relative" href={"/cart"}>
-                    {cartDetails && (
-                      <Badge
-                        className="absolute -top-3.5 -end-2 h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"
-                        variant="destructive"
-                      >
-                        {cartDetails.numOfCartItems}
-                      </Badge>
-                    )}
-                    <ShoppingCart className="size-6" />
-                  </Link>
+                      <div className="flex items-center gap-4">
+                        <Link className="relative" href={"/wishlist"}>
+                          {/* 🔧 Wishlist Count (Mobile) */}
+                          {wishlist.length > 0 && (
+                            <Badge
+                              className="absolute -top-3.5 -end-2 h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"
+                              variant="destructive"
+                            >
+                              {wishlist.length}
+                            </Badge>
+                          )}
+                          <Heart className="size-6" />
+                        </Link>
+                        <Link className="relative" href={"/cart"}>
+                          {cartDetails && (
+                            <Badge
+                              className="absolute -top-3.5 -end-2 h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"
+                              variant="destructive"
+                            >
+                              {cartDetails.numOfCartItems}
+                            </Badge>
+                          )}
+                          <ShoppingCart className="size-6" />
+                        </Link>
 
-                  <DropdownMenu>
-                    <DropdownMenuTrigger>
-                      <User className="size-6" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem>
-                        <Link href={"/profile"}>profile</Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>purchase</DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="cursor-pointer"
-                        onClick={() => signOut({ callbackUrl: "/login" })}
-                      >
-                        Sign Out
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger>
+                            <User className="size-6" />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                              <Link href={"/profile"}>Profile</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>Purchase</DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="cursor-pointer"
+                              onClick={() =>
+                                signOut({ callbackUrl: "/login" })
+                              }
+                            >
+                              Sign Out
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </>
                   )}
                 </div>
               </div>

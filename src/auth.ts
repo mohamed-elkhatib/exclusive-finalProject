@@ -1,6 +1,5 @@
-
 import { NextAuthOptions } from "next-auth";
-import  CredentialsProvider  from 'next-auth/providers/credentials';
+import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -30,7 +29,7 @@ export const authOptions: NextAuthOptions = {
           if (!res.ok) {
             throw new Error(data.message || "something went wrong");
           }
-          const decoded = JSON.parse(atob(data.token.split('.')[1]))
+          const decoded = JSON.parse(atob(data.token.split(".")[1]));
           return {
             id: decoded.id,
             user: data.user,
@@ -40,23 +39,23 @@ export const authOptions: NextAuthOptions = {
           console.log(error);
           throw new Error((error as Error).message);
         }
-        
       },
     }),
   ],
-  callbacks:{
-    async jwt({ token, user}) {
-      if(user){
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
         token.user = user.user;
         token.token = user.token;
       }
-      return token
+      return token;
     },
-     async session({ session, token }) {
-      if(token){
+    async session({ session, token }) {
+      if (token) {
         session.user = token.user;
+        session.user.token = token.token; 
       }
-      return session
+      return session;
     },
   },
   pages: {
